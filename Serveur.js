@@ -150,7 +150,7 @@ wss.on('connection', (ws) => {
 
 // Serveur Express
 const app = express();
-const PORT = 8000;
+const PORT = 3000;
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index1.html'));
