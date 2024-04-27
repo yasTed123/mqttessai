@@ -160,7 +160,7 @@ wss.on('connection', (ws) => {
 // Serveur Express
 const app = express();
 const PORT = 3000;
-get('/', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname,'index1.html'));
 });
 app.listen(PORT, () => {
