@@ -799,7 +799,7 @@ main .histories h2 {
   </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const socket = new WebSocket('ws://localhost:3030');
+    const socket = new WebSocket('ws://localhost:8080');
 
     const ctx = document.getElementById('sensorChart').getContext('2d');
     const sensorChart = new Chart(ctx, {
