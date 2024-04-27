@@ -160,11 +160,8 @@ wss.on('connection', (ws) => {
 const app = express();
 const PORT = 8000;
 
-// Servir les fichiers statiques
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index1.html'));
+    res.sendFile(path.join(__dirname, 'index1.html'));
 });
 
 app.listen(PORT, () => {
