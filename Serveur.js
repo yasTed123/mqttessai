@@ -19,8 +19,11 @@ const db = mongoose.connection;
 const dataSchema = new mongoose.Schema({
     temperature: Number,
     humidity: Number,
-    force: Number
-  });
+    force: Number,
+    sensor_id: String, // Ajout pour la partie de gaz
+    description: String, // Ajout pour la partie de gaz
+    data: String // Ajout pour la partie de gaz
+});
   
 // Define a model based on the schema
 const DataModel = mongoose.model('Data', dataSchema);
@@ -138,8 +141,6 @@ mqttServer.on('ready', () => {
 mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
-
-let newData
 
 // Événement lorsqu'un message MQTT est publié
 mqttServer.on('published', (packet, client) => {
