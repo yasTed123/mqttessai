@@ -110,13 +110,24 @@ mqttServer.on('ready', () => {
 mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
+// Déclaration de newData en dehors de la fonction published
+let newData;
+
+// Serveur MQTT
+const mqttSettings = { port: 1883 };
+const mqttServer = new mosca.Server(mqttSettings);
+mqttServer.on('ready', () => {
+    console.log("Broker Mosca démarré sur le port", mqttSettings.port);
+});
+mqttServer.on('clientConnected', (client) => {
+    console.log('Client connecté:', client.id);
+});
 mqttServer.on('published', (packet, client) => {
     if (packet.topic.indexOf('$SYS') === -1) {
-        const payload = packet.payload.toString(); // Convertir la charge utile en chaîne de caractères
+        const payload = packet.payload.toString();
         console.log('Message publié:', payload);
 
-        // Insérer les données dans MongoDB
-        const newData = new DataModel({ // Utilisation de newData déclaré plus haut
+        newData = new DataModel({
             timestamp: new Date(),
             data: payload
         });
@@ -124,31 +135,38 @@ mqttServer.on('published', (packet, client) => {
         newData.save()
             .then(() => console.log('Données insérées dans MongoDB'))
             .catch(err => console.error('Erreur lors de l\'insertion des données dans MongoDB:', err));
+
+        // Envoi de données au client WebSocket
+        wss.clients.forEach(ws => {
+            ws.send(JSON.stringify(newData));
+        });
     }
 });
 
-
-// Client MQTT
-const client = mqtt.connect('mqtt://13.48.115.61:1883');
-client.on('connect', () => {
-    client.subscribe('esp8266/mq135');
-});
-
-
-
 // Serveur WebSocket
-const wss = new WebSocket.Server({ port:3030 });
+const wss = new WebSocket.Server({ port: 3030 });
 wss.on('connection', (ws) => {
     console.log('Client connected');
-    ws.send(JSON.stringify(newData));
+    if (newData) {
+        ws.send(JSON.stringify(newData));
+    }
+
+    ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
+    });
 });
 
 // Serveur Express
 const app = express();
-const PORT = 3000;
+const PORT = 8000;
+
+// Servir les fichiers statiques
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index1.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index1.html'));
 });
+
 app.listen(PORT, () => {
     console.log(`Serveur backend en cours d'exécution sur le port ${PORT}`);
 });
