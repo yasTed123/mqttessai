@@ -9,7 +9,7 @@ const url = require('url');
 const fs = require('fs');
 
 // Configuration de MongoDB
-const mongoURL = 'mongodb://admin:aymen@13.48.115.61 :27017/mydatabase?directConnection=true&appName=mongosh+2.2.4';
+const mongoURL = 'mongodb://admin:aymen@13.48.115.61:27017/mydatabase?directConnection=true&appName=mongosh+2.2.4';
 
 // Connect to MongoDB using Mongoose
 mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
