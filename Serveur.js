@@ -9,7 +9,7 @@ const url = require('url');
 const fs = require('fs');
 
 // Configuration de MongoDB
-const mongoURL = 'mongodb://admin:aymen@13.48.115.61:27017/mydatabase?directConnection=true&appName=mongosh+2.2.4';
+const mongoURL = 'mongodb://admin:aymen@13.48.115.61 :27017/mydatabase?directConnection=true&appName=mongosh+2.2.4';
 
 // Connect to MongoDB using Mongoose
 mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -24,6 +24,7 @@ const dataSchema = new mongoose.Schema({
     description: String, // Ajout pour la partie de gaz
     data: String // Ajout pour la partie de gaz
 
+    
   });
   
 // Define a model based on the schema
@@ -142,7 +143,9 @@ mqttServer.on('ready', () => {
 mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
-let newData;
+
+let newData
+
 // Événement lorsqu'un message MQTT est publié
 mqttServer.on('published', (packet, client) => {
     if (packet.topic.indexOf('$SYS') === -1) {
@@ -158,28 +161,11 @@ mqttServer.on('published', (packet, client) => {
         newData.save()
             .then(() => console.log('Données insérées dans MongoDB'))
             .catch(err => console.error('Erreur lors de l\'insertion des données dans MongoDB:', err));
-
-        // Créer un objet JSON pour la valeur de gaz
-        const gasData = {
-            field1: "niveau de gaz: ",
-            value: parseInt(payload.substring(payload.indexOf(':') + 1).trim())
-        };
-
-        // Envoyer les données de gaz aux clients WebSocket connectés
-        wss.clients.forEach(function each(client) {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(gasData));
-            }
-        });
-
-        // Utilisez les données après les avoir mises à jour
-        console.log("Valeurs du capteur mises à jour : ", gasData);
     }
 });
 
-
 // Connexion à MQTT
-const client = mqtt.connect('mqtt://13.48.115.61:1883');
+const client = mqtt.connect('mqtt://13.48.115.61 :1883');
 client.on('connect', () => {
     client.subscribe('esp8266/mq135');
 });
