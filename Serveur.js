@@ -110,19 +110,6 @@ mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
 let newData;
-mqttServer.on('published', (packet, client) => {
-    if (packet.topic.indexOf('$SYS') === -1) {
-        const payload = packet.payload.toString();
-        console.log('Message publié:', payload);
-        const newData = new DataModel({
-            timestamp: new Date(),
-            data: payload
-        });
-        newData.save()
-            .then(() => console.log('Données insérées dans MongoDB'))
-            .catch(err => console.error('Erreur lors de l\'insertion des données dans MongoDB:', err));
-    }
-});
 
 // Client MQTT
 const client = mqtt.connect('mqtt://13.48.115.61:1883');
