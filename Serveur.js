@@ -173,7 +173,7 @@ client.on('connect', () => {
         console.log('Client connected');
 
         // Envoyer les données initiales au client WebSocket lors de la connexion
-        ws.send(JSON.stringify(newDat)); // Utilisation de newData déclaré plus haut
+        ws.send(JSON.stringify(newData)); // Utilisation de newData déclaré plus haut
     });
 
 // Écoute des messages MQTT
