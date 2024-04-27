@@ -142,7 +142,7 @@ mqttServer.on('ready', () => {
 mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
-
+let newData;
 // Événement lorsqu'un message MQTT est publié
 mqttServer.on('published', (packet, client) => {
     if (packet.topic.indexOf('$SYS') === -1) {
