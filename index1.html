@@ -659,8 +659,8 @@ main .histories h2 {
 
   <!-- Sensor Data Section -->
   <!-- <h1>Sensor Data</h1> -->
-  <div id="sensorValues"></div>
-  <script>
+   <!-- <div id="sensorValues"></div> -->
+ <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Sélection des éléments HTML
     
@@ -842,13 +842,6 @@ main .histories h2 {
         }
         sensorChart.update();
     }
-    fetch('/gas-data')
-    .then(response => response.json())
-    .then(data => {
-        // Manipuler les données récupérées et les afficher sur la page web
-        console.log(data);
-    })
-    .catch(error => console.error('Erreur lors de la récupération des données de gaz:', error));
 
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
