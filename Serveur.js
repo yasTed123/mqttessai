@@ -23,7 +23,10 @@ const db = mongoose.connection;
 const dataSchema = new mongoose.Schema({
   temperature: Number,
   humidity: Number,
-  force: Number
+  force: Number,
+  sensor_id: String, // Ajout pour la partie de gaz
+  description: String, // Ajout pour la partie de gaz
+  data: String // Ajout pour la partie de gaz
 });
 
 const DataModel = mongoose.model('Data', dataSchema);
