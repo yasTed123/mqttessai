@@ -17,6 +17,10 @@ const dataSchema = new mongoose.Schema({
     temperature: Number,
     humidity: Number,
     force: Number,
+    sensor_id: String,
+    description: String,
+    data: String
+
 });
 const DataModel = mongoose.model('Data', dataSchema);
 
