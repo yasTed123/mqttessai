@@ -160,6 +160,7 @@ wss.on('connection', (ws) => {
 // Serveur Express
 const app = express();
 const PORT = 3000;
+const DataModel = require('./models/DataModel');
 app.get('/gas-data', (req, res) => {
     DataModel.find({}, (err, data) => {
         if (err) {
