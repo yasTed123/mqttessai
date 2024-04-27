@@ -109,32 +109,27 @@ mqttServer.on('ready', () => {
 mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
-let newData;
-mqttServer.on('published', (packet, client) => {
-    if (packet.topic.indexOf('$SYS') === -1) {
-        const payload = packet.payload.toString(); // Convertir la charge utile en chaîne de caractères
-        console.log('Message publié:', payload);
 
-        // Insérer les données dans MongoDB
-        const data = {
-             field1: "niveau de gaz: ",
-             value: parseInt(sensorValue)
-        };
-        newData = new DataModel({
-            field1: data.field1,
-            value: data.value
+client.on('message', (topic, message) => {
+    const messageString = message.toString();
+    const sensorValueIndex = messageString.indexOf(':') + 1;
+    const sensorValue = messageString.substring(sensorValueIndex).trim();
+    const data = {
+        field1: "niveau de gaz: ",
+        value: parseInt(sensorValue)
+    };
+    newData = new DataModel({
+        field1: data.field1,
+        value: data.value
+    });
+    newData.save()
+        .then(() => {
+            console.log('Données insérées avec succès dans MongoDB');
+        })
+        .catch(err => {
+            console.error('Erreur lors de insertion des données dans MongoDB : ', err);
         });
-
-        newData.save()
-            .then(() => {
-                console.log('Données insérées avec succès dans MongoDB');
-            })
-            .catch(err => {
-                console.error('Erreur lors de l\'insertion des données dans MongoDB : ', err);
-            });
-    }
 });
-
 
 // Client MQTT
 const client = mqtt.connect('mqtt://13.48.115.61:1883');
