@@ -134,7 +134,7 @@ mqttServer.on('published', (packet, client) => {
         });
     }
 });
-/ Connexion à MQTT
+// Connexion à MQTT
 const client = mqtt.connect('mqtt://13.48.115.61:1883');
 client.on('connect', () => {
     client.subscribe('esp8266/mq135');
