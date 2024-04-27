@@ -110,25 +110,22 @@ mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
 let newData;
+mqttServer.on('published', (packet, client) => {
+    if (packet.topic.indexOf('$SYS') === -1) {
+        const payload = packet.payload.toString(); // Convertir la charge utile en chaîne de caractères
+        console.log('Message publié:', payload);
 
-// Client MQTT
-const client = mqtt.connect('mqtt://13.48.115.61:1883');
-client.on('connect', () => {
-    client.subscribe('esp8266/mq135');
-});
-client.on('message', (topic, message) => {
-    const messageString = message.toString();
-    const sensorValueIndex = messageString.indexOf(':') + 1;
-    const sensorValue = messageString.substring(sensorValueIndex).trim();
-    const data = {
-        field1: "niveau de gaz: ",
-        value: parseInt(sensorValue)
-    };
-    newData = new DataModel({
-        field1: data.field1,
-        value: data.value
-    });
-    newData.save()
+        // Insérer les données dans MongoDB
+        const data = {
+             field1: "niveau de gaz: ",
+             value: parseInt(sensorValue)
+        };
+        newData = new DataModel({
+            field1: data.field1,
+            value: data.value
+        });
+
+         newData.save()
         .then(() => {
             console.log('Données insérées avec succès dans MongoDB');
         })
@@ -136,6 +133,14 @@ client.on('message', (topic, message) => {
             console.error('Erreur lors de insertion des données dans MongoDB : ', err);
         });
 });
+
+
+// Client MQTT
+const client = mqtt.connect('mqtt://13.48.115.61:1883');
+client.on('connect', () => {
+    client.subscribe('esp8266/mq135');
+});
+
 
 // Serveur WebSocket
 const wss = new WebSocket.Server({ port:3030 });
