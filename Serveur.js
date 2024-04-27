@@ -110,6 +110,12 @@ mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
 
+// Client MQTT
+const client = mqtt.connect('mqtt://13.48.115.61:1883');
+client.on('connect', () => {
+    client.subscribe('esp8266/mq135');
+});
+
 client.on('message', (topic, message) => {
     const messageString = message.toString();
     const sensorValueIndex = messageString.indexOf(':') + 1;
@@ -131,11 +137,6 @@ client.on('message', (topic, message) => {
         });
 });
 
-// Client MQTT
-const client = mqtt.connect('mqtt://13.48.115.61:1883');
-client.on('connect', () => {
-    client.subscribe('esp8266/mq135');
-});
 
 
 // Serveur WebSocket
