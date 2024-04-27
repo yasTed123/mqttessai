@@ -17,9 +17,6 @@ const dataSchema = new mongoose.Schema({
     temperature: Number,
     humidity: Number,
     force: Number,
-    sensor_id: String,
-    description: String,
-    data: String
 });
 const DataModel = mongoose.model('Data', dataSchema);
 
@@ -146,7 +143,7 @@ wss.on('connection', (ws) => {
 const app = express();
 const PORT = 3000;
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname,'index1.html'));
+    res.sendFile(path.join(__dirname, 'index1.html'));
 });
 app.listen(PORT, () => {
     console.log(`Serveur backend en cours d'exécution sur le port ${PORT}`);
