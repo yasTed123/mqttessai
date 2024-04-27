@@ -136,7 +136,7 @@ mqttServer.on('published', (packet, client) => {
 });
 
 // Serveur WebSocket
-const wss = new WebSocket.Server({ port: 3030 });
+const wss = new WebSocket.Server({ port: 8080 });
 wss.on('connection', (ws) => {
     console.log('Client connected');
     if (newData) {
@@ -147,6 +147,7 @@ wss.on('connection', (ws) => {
         console.error('WebSocket error:', error);
     });
 });
+ // Utilisez les données après les avoir mises à jour
 
 // Serveur Express
 const app = express();
