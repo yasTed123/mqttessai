@@ -160,11 +160,21 @@ mqttServer.on('published', (packet, client) => {
         newData.save()
             .then(() => console.log('Données insérées dans MongoDB'))
             .catch(err => console.error('Erreur lors de l\'insertion des données dans MongoDB:', err));
-    }
-});
+            // Créer un objet JSON pour la valeur de gaz
+        const gasData = {
+            field1: "niveau de gaz: ",
+            value: parseInt(payload.substring(payload.indexOf(':') + 1).trim())
+        };
+
+        // Envoyer les données de gaz aux clients WebSocket connectés
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(gasData));
+            }
+        });
 
 // Connexion à MQTT
-const client = mqtt.connect('mqtt://13.48.115.61  :1883');
+const client = mqtt.connect('mqtt://13.48.115.61:1883');
 client.on('connect', () => {
     client.subscribe('esp8266/mq135');
 });
@@ -179,7 +189,7 @@ client.on('connect', () => {
         console.log('Client connected');
 
         // Envoyer les données initiales au client WebSocket lors de la connexion
-        ws.send(JSON.stringify(newDat)); // Utilisation de newData déclaré plus haut
+        ws.send(JSON.stringify(newData)); // Utilisation de newData déclaré plus haut
     });
 
 // Écoute des messages MQTT
