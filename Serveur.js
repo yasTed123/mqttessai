@@ -143,8 +143,6 @@ mqttServer.on('clientConnected', (client) => {
     console.log('Client connecté:', client.id);
 });
 
-let newData
-
 // Événement lorsqu'un message MQTT est publié
 mqttServer.on('published', (packet, client) => {
     if (packet.topic.indexOf('$SYS') === -1) {
@@ -160,7 +158,8 @@ mqttServer.on('published', (packet, client) => {
         newData.save()
             .then(() => console.log('Données insérées dans MongoDB'))
             .catch(err => console.error('Erreur lors de l\'insertion des données dans MongoDB:', err));
-            // Créer un objet JSON pour la valeur de gaz
+
+        // Créer un objet JSON pour la valeur de gaz
         const gasData = {
             field1: "niveau de gaz: ",
             value: parseInt(payload.substring(payload.indexOf(':') + 1).trim())
@@ -172,6 +171,12 @@ mqttServer.on('published', (packet, client) => {
                 client.send(JSON.stringify(gasData));
             }
         });
+
+        // Utilisez les données après les avoir mises à jour
+        console.log("Valeurs du capteur mises à jour : ", gasData);
+    }
+});
+
 
 // Connexion à MQTT
 const client = mqtt.connect('mqtt://13.48.115.61:1883');
