@@ -9,7 +9,7 @@ const url = require('url');
 const fs = require('fs');
 
 // Configuration de MongoDB
-const mongoURL = 'mongodb://admin:aymen@51.20.12.10:27017/mydatabase?directConnection=true&appName=mongosh+2.2.4';
+const mongoURL = 'mongodb://admin:aymen@13.48.115.61:27017/mydatabase?directConnection=true&appName=mongosh+2.2.4';
 
 // Connect to MongoDB using Mongoose
 mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -158,7 +158,7 @@ mqttServer.on('published', (packet, client) => {
 });
 
 // Connexion à MQTT
-const client = mqtt.connect('mqtt://51.20.12.10:1883');
+const client = mqtt.connect('mqtt://13.48.115.61:1883');
 client.on('connect', () => {
     client.subscribe('esp8266/mq135');
 });
