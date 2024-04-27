@@ -19,106 +19,109 @@ const db = mongoose.connection;
 const dataSchema = new mongoose.Schema({
     temperature: Number,
     humidity: Number,
-    force: Number
-  });
-  
+    force: Number,
+    gas: Number // Ajout du champ pour les données de gaz
+});
+
 // Define a model based on the schema
 const DataModel = mongoose.model('Data', dataSchema);
 
 // Create a server HTTP
 const server = http.createServer((req, res) => {
-     // Analyze the request URL
-  const parsedUrl = url.parse(req.url, true); 
-  // Check the URL path
-  if (parsedUrl.pathname === '/update') {
-    // Check if the HTTP method is GET
-    if (req.method === 'GET') {
-      // Retrieve temperature, humidity, and force data from URL parameters
-      const temp = parseFloat(parsedUrl.query.temp);
-      const humidity = parseFloat(parsedUrl.query.humidity);
-      const force = parseInt(parsedUrl.query.force);
+    // Analyze the request URL
+    const parsedUrl = url.parse(req.url, true);
+    // Check the URL path
+    if (parsedUrl.pathname === '/update') {
+        // Check if the HTTP method is GET
+        if (req.method === 'GET') {
+            // Retrieve temperature, humidity, force, and gas data from URL parameters
+            const temp = parseFloat(parsedUrl.query.temp);
+            const humidity = parseFloat(parsedUrl.query.humidity);
+            const force = parseInt(parsedUrl.query.force);
+            const gas = parseInt(parsedUrl.query.gas); // Extraction de la donnée de gaz
 
-      // Display received data in the server console
-      console.log('Temperature:', temp, '°C');
-      console.log('Humidity:', humidity, '%');
-      console.log('Force:', force);
+            // Display received data in the server console
+            console.log('Temperature:', temp, '°C');
+            console.log('Humidity:', humidity, '%');
+            console.log('Force:', force);
+            console.log('Gas:', gas); // Affichage de la donnée de gaz
 
-      // Create a new document instance
-      const newData = new DataModel({ temperature: temp, humidity: humidity, force: force });
+            // Create a new document instance
+            const newData = new DataModel({ temperature: temp, humidity: humidity, force: force, gas: gas });
 
-      // Save the data to MongoDB
-      newData.save()
-        .then(() => {
-          console.log('Data saved to MongoDB successfully');
-          // Send an HTTP response to the client
-          res.writeHead(200, { 'Content-Type': 'text/plain' });
-          res.end('Data received and saved successfully');
-        })
-        .catch(err => {
-          console.error('Failed to save data to MongoDB:', err);
-          res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.end('Internal Server Error');
+            // Save the data to MongoDB
+            newData.save()
+                .then(() => {
+                    console.log('Data saved to MongoDB successfully');
+                    // Send an HTTP response to the client
+                    res.writeHead(200, { 'Content-Type': 'text/plain' });
+                    res.end('Data received and saved successfully');
+                })
+                .catch(err => {
+                    console.error('Failed to save data to MongoDB:', err);
+                    res.writeHead(500, { 'Content-Type': 'text/plain' });
+                    res.end('Internal Server Error');
+                });
+        } else {
+            // If the HTTP method is not GET, return an error
+            res.writeHead(405, { 'Content-Type': 'text/plain' });
+            res.end('Method Not Allowed');
+        }
+    } else if (parsedUrl.pathname === '/sensorData') {
+        // Serve the latest sensor data as JSON
+        DataModel.findOne().sort({ $natural: -1 }).exec() // Utilisation de la promesse
+            .then(data => {
+                if (!data) {
+                    res.writeHead(404, { 'Content-Type': 'text/plain' });
+                    res.end('Sensor data not found');
+                } else {
+                    // Send the sensor data as JSON response
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify(data));
+                }
+            })
+            .catch(err => {
+                console.error('Failed to retrieve sensor data from MongoDB:', err);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Internal Server Error');
+            });
+    } else if (parsedUrl.pathname === '/') {
+        // Serve the HTML page
+        const filePath = path.join(__dirname, 'index1.html');
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                console.error('Failed to read HTML file:', err);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Internal Server Error');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end(data);
+            }
+        });
+    } else if (parsedUrl.pathname === '/index1.html') {
+        // Serve the sensor data HTML page
+        const filePath = path.join(__dirname, 'index1.html');
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                console.error('Failed to read HTML file:', err);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Internal Server Error');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end(data);
+            }
         });
     } else {
-      // If the HTTP method is not GET, return an error
-      res.writeHead(405, { 'Content-Type': 'text/plain' });
-      res.end('Method Not Allowed');
+        // If the URL is not handled, return a 404 error
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Not Found');
     }
-  } else if (parsedUrl.pathname === '/sensorData') {
-    // Serve the latest sensor data as JSON
-    DataModel.findOne().sort({$natural:-1}).exec() // Utilisation de la promesse
-      .then(data => {
-        if (!data) {
-          res.writeHead(404, { 'Content-Type': 'text/plain' });
-          res.end('Sensor data not found');
-        } else {
-          // Send the sensor data as JSON response
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(data));
-        }
-      })
-      .catch(err => {
-        console.error('Failed to retrieve sensor data from MongoDB:', err);
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Internal Server Error');
-      });
-  } else if (parsedUrl.pathname === '/') {
-    // Serve the HTML page
-    const filePath = path.join(__dirname, 'index1.html');
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        console.error('Failed to read HTML file:', err);
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Internal Server Error');
-      } else {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(data);
-      }
-    });
-  } else if (parsedUrl.pathname === '/index1.html') {
-    // Serve the sensor data HTML page
-    const filePath = path.join(__dirname, 'index1.html');
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        console.error('Failed to read HTML file:', err);
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Internal Server Error');
-      } else {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(data);
-      }
-    });
-  } else {
-    // If the URL is not handled, return a 404 error
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not Found');
-  }
 });
 
 // Define the port on which the server will listen
 const port = 8000;
 server.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+    console.log(`Server running at http://localhost:${port}/`);
 });
 
 // Configuration du broker MQTT
@@ -164,17 +167,15 @@ client.on('connect', () => {
 });
 
 // Créer un serveur WebSocket
-    const wss = new WebSocket.Server({ port: 3030 });
+const wss = new WebSocket.Server({ port: 3030 });
 
 // Écouter les connexions WebSocket
+wss.on('connection', function connection(ws) {
+    console.log('Client connected');
 
-    // Écouter les connexions WebSocket
-    wss.on('connection', function connection(ws) {
-        console.log('Client connected');
-
-        // Envoyer les données initiales au client WebSocket lors de la connexion
-        ws.send(JSON.stringify(newData)); // Utilisation de newData déclaré plus haut
-    });
+    // Envoyer les données initiales au client WebSocket lors de la connexion
+    ws.send(JSON.stringify(newData)); // Utilisation de newData déclaré plus haut
+});
 
 // Écoute des messages MQTT
 client.on('message', function (topic, message) {
@@ -192,7 +193,7 @@ client.on('message', function (topic, message) {
     };
 
     // Enregistrer les nouvelles données dans MongoDB
-    newData = new DataModel({ // Utilisation de newData déclaré plus haut
+    const newData = new DataModel({ // Utilisation de newData déclaré plus haut
         field1: data.field1,
         value: data.value
     });
