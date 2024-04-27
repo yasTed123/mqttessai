@@ -102,15 +102,7 @@ server.listen(port, () => {
 });
 
 // Serveur MQTT
-const mqttSettings = { port: 1883 };
-const mqttServer = new mosca.Server(mqttSettings);
-mqttServer.on('ready', () => {
-    console.log("Broker Mosca démarré sur le port", mqttSettings.port);
-});
-mqttServer.on('clientConnected', (client) => {
-    console.log('Client connecté:', client.id);
-});
-// Déclaration de newData en dehors de la fonction published
+
 let newData;
 
 // Serveur MQTT
