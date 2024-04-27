@@ -125,13 +125,14 @@ mqttServer.on('published', (packet, client) => {
             value: data.value
         });
 
-         newData.save()
-        .then(() => {
-            console.log('Données insérées avec succès dans MongoDB');
-        })
-        .catch(err => {
-            console.error('Erreur lors de insertion des données dans MongoDB : ', err);
-        });
+        newData.save()
+            .then(() => {
+                console.log('Données insérées avec succès dans MongoDB');
+            })
+            .catch(err => {
+                console.error('Erreur lors de l\'insertion des données dans MongoDB : ', err);
+            });
+    }
 });
 
 
