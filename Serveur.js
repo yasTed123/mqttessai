@@ -160,6 +160,16 @@ wss.on('connection', (ws) => {
 // Serveur Express
 const app = express();
 const PORT = 3000;
+app.get('/gas-data', (req, res) => {
+    DataModel.find({}, (err, data) => {
+        if (err) {
+            console.error('Erreur lors de la récupération des données de gaz:', err);
+            res.status(500).json({ error: 'Erreur lors de la récupération des données de gaz' });
+        } else {
+            res.json(data);
+        }
+    });
+});
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index1.html'));
 });
