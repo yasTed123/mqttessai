@@ -615,11 +615,11 @@ main .histories h2 {
           <div class="sensor-value">
               <div class="middle">
                   <div class="left">
-                      <h3>Niveau de Gaz </h3>
+                      <h3>Niveau de Gaz</h3>
                       <h1 id="sensorValues"></h1>
                   </div>
                   <div class="icon">
-                      <span class="material-symbols-sharp"> </span>
+                      <span class="material-icons">gas_meter</span>
                   </div>
               </div>
           </div>
@@ -638,7 +638,7 @@ main .histories h2 {
         <!-- End of force -->
       </div>
       <div class="sensor-chart">
-        <h2>Graphique du Capteur de gaz</h2>
+        <h2>Évolution du niveau de gaz</h2>
         <canvas id="sensorChart" width="400" height="100"></canvas>
       </div>
     </div>
@@ -799,7 +799,7 @@ main .histories h2 {
   </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const socket = new WebSocket('ws://localhost:8080');
+    const socket = new WebSocket('ws://16.170.247.239:8080');
 
     const ctx = document.getElementById('sensorChart').getContext('2d');
     const sensorChart = new Chart(ctx, {
@@ -807,7 +807,7 @@ main .histories h2 {
         data: {
             labels: [],
             datasets: [{
-                label: 'Valeurs du capteur de gaz',
+                label: 'Valeurs du niveau de  gaz en fonction de temps',
                 data: [],
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -831,7 +831,7 @@ main .histories h2 {
 
     function updateSensorValues(data) {
         const sensorValuesDiv = document.getElementById("sensorValues");
-        sensorValuesDiv.innerHTML = `<p>${data.field1}: ${data.value}</p>`;
+        sensorValuesDiv.innerHTML = `<p> ${data.value}ppm</p>`;
     }
 
     function updateChart(data) {
